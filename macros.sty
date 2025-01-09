@@ -1,0 +1,346 @@
+\RequirePackage{xspace}
+
+\RequirePackage{stackrel}
+
+\RequirePackage{scalerel}
+
+% ---------------------------------------------------------
+
+\RequirePackage{soul}
+
+\makeatletter
+\let\HL\hl
+\renewcommand<>{\hl}[1]{%
+  \alt#2{%
+    \let\set@color\beamerorig@set@color%
+    \let\reset@color\beamerorig@reset@color%
+    \HL{#1}%
+  }{#1}%
+}
+\makeatother
+
+% ---------------------------------------------------------
+
+\makeatletter
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
+
+%------------------------------------------------------------
+
+\makeatletter
+\DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+\def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+
+\def\eg{\emph{e.g}\onedot}
+\def\ie{\emph{i.e}\onedot}
+\def\etc{\emph{etc}\onedot}
+
+
+% ---------------------------------------------------------
+
+\newcommand{\finmap}{%
+  \stackrel{\mathrm{fin}}{\rightharpoonup}%
+}
+\newcommand{\dom}[1]{%
+  \mathrm{dom} (#1)%
+}
+\newcommand{\codom}[1]{%
+  \mathrm{codom} (#1)%
+}
+\newcommand{\constr}[2][]{%
+  \bold{#2}\ifx #1 \else (#1)\fi%
+}
+\newcommand{\wf}[2][]{%
+  \mathrm{wf}\ifx #1 \else _#1 \fi (#2)%
+}
+\newcommand{\mathhyphen}{%
+  {\hbox{-}}%
+}
+\newcommand{\circled}[1]{%
+  \raisebox{.5pt}{\textcircled{\raisebox{-.9pt}{#1}}}%
+}
+
+% ---------------------------------------------------------
+
+\newcommand{\Coq}{\textsc{Coq}/\textsc{Rocq}\xspace}
+\newcommand{\OCaml}{\textsc{OCaml}\xspace}
+\newcommand{\Iris}{\textsc{Iris}\xspace}
+\newcommand{\Simuliris}{\textsc{Simuliris}\xspace}
+\newcommand{\DataLang}{\textsc{DataLang}\xspace}
+
+% ---------------------------------------------------------
+
+\makeatletter
+\newcommand{\datalangIdx}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil i \else \mathrm{Index} \fi%
+}
+\newcommand{\datalangTag}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil t \else \mathrm{Tag} \fi%
+}
+\newcommand{\datalangBool}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil b \else \mathbb{B} \fi%
+}
+\newcommand{\datalangLoc}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil \ell \else \mathbb{L} \fi%
+}
+\newcommand{\datalangFn}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil f \else \mathbb{F} \fi%
+}
+\newcommand{\datalangVar}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil x \else \mathbb{X} \fi%
+}
+\newcommand{\datalangVarTwo}{%
+  y%
+}
+\newcommand{\datalangVal}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil v \else \mathrm{Val} \fi%
+}
+\newcommand{\datalangValTwo}{%
+  w%
+}
+\newcommand{\datalangExpr}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil e \else \mathrm{Expr} \fi%
+}
+\newcommand{\datalangEctx}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil K \else \mathrm{Ectx} \fi%
+}
+\newcommand{\datalangDef}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil d \else \mathrm{Def} \fi%
+}
+\newcommand{\datalangProg}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil p \else \mathrm{Prog} \fi%
+}
+\newcommand{\datalangState}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil \sigma \else \mathrm{State} \fi%
+}
+\newcommand{\datalangConfig}[1][\@nil]{%
+  \def\@tmp{#1}\ifx\@tmp\@nnil \rho \else \mathrm{Config} \fi%
+}
+\newcommand{\datalangRenaming}{%
+  \xi%
+}
+\makeatother
+
+\newcommand{\datalangKeyword}[1]{%
+  \texttt{\bfseries #1}%
+}
+
+\newcommand{\datalangZero}{%
+  \texttt{0}%
+}
+\newcommand{\datalangOne}{%
+  \texttt{1}%
+}
+\newcommand{\datalangTwo}{%
+  \texttt{2}%
+}
+\newcommand{\datalangUnit}{%
+  \texttt{()}%
+}
+\newcommand{\datalangFnptr}[1]{%
+  \texttt{@} #1%
+}
+\newcommand{\datalangLet}[3]{%
+  \datalangKeyword{let}\ #1\ \texttt{=}\ #2\ \datalangKeyword{in}\ #3%
+}
+\newcommand{\datalangSeq}[2]{%
+  #1\ \texttt{;}\ #2%
+}
+\newcommand{\datalangCall}[2]{%
+  #1\ #2%
+}
+\newcommand{\datalangEq}[2]{%
+  #1\ \texttt{=}\ #2%
+}
+\newcommand{\datalangIf}[3]{%
+  \datalangKeyword{if}\ #1\ %
+  \datalangKeyword{then}\ #2\ %
+  \datalangKeyword{else}\ #3%
+}
+\newcommand{\datalangBlock}[3]{%
+  \texttt{\{}\, #1 \texttt{,}\, #2 \texttt{,}\, #3 \,\texttt{\}}%
+}
+\newcommand{\datalangBlockDet}[3]{%
+  \texttt{[}\, #1 \texttt{,}\, #2 \texttt{,}\, #3 \,\texttt{]}%
+}
+\newcommand{\datalangLoad}[2]{%
+  #1 \texttt{.(} #2 \texttt{)}%
+}
+\newcommand{\datalangStore}[3]{%
+  #1 \texttt{.(} #2 \texttt{)}\ {\leftarrow}\ #3%
+}
+\newcommand{\datalangRec}[2]{%
+  \datalangKeyword{fun}\ #1\ {\rightarrow}\ #2%
+}
+\newcommand{\datalangPair}[2]{%
+  \texttt{(} #1 \texttt{,}\, #2 \texttt{)}%
+}
+\newcommand{\datalangNil}{%
+  \texttt{[]}%
+}
+\newcommand{\datalangCons}[2]{%
+  #1\ \texttt{::}\ #2%
+}
+\makeatletter
+\newcommand{\datalangMatchOneline}[6][\@nil]{%
+  \datalangKeyword{match}\ #2\ \datalangKeyword{with}\ %
+  \def\@tmp{#1}\ifx\@tmp\@nnil \else \texttt{|}\ \fi%
+  \datalangNil\ \rightarrow\ #3\ %
+  \texttt{|}\ \datalangCons{#4}{#5}\ \rightarrow\ #6%
+}
+\makeatother
+\newcommand{\datalangMatch}[5]{%
+  \begin{array}{l}
+      \datalangKeyword{match}\ #1\ \datalangKeyword{with}
+    \\
+      \texttt{|}\ \datalangNil\ \rightarrow\ #2
+    \\
+      \texttt{|}\ \datalangCons{#3}{#4}\ \rightarrow\ #5
+  \end{array}%
+}
+\newcommand{\datalangHole}{%
+  \scaleobj{0.7}{\blacksquare}%
+}
+
+% ---------------------------------------------------------
+
+\newcommand{\headStep}[1]{%
+  \stackrel[\scriptscriptstyle\textrm{head}]{\scriptscriptstyle#1}{\longrightarrow}%
+}
+\newcommand{\step}[1]{%
+  \stackrel{\scriptscriptstyle#1}{\longrightarrow}%
+}
+\newcommand{\pureStep}[1]{%
+  \stackrel[\scriptscriptstyle\textrm{pure}]{#1}{\longrightarrow}%
+}
+\newcommand{\diverges}[2]{%
+  #2 \Uparrow_{#1}%
+}
+\newcommand{\similar}{%
+  \sim%
+}
+\newcommand{\refined}{%
+  \sqsupseteq%
+}
+
+\newcommand{\tmc}{%
+  \rightsquigarrow%
+}
+\newcommand{\tmcDir}[1]{%
+  \stackrel[\scriptscriptstyle\textrm{dir}]{#1}{\tmc}%
+}
+\newcommand{\tmcDps}[1]{%
+  \stackrel[\scriptscriptstyle\textrm{dps}]{#1}{\tmc}%
+}
+
+% ---------------------------------------------------------
+
+\newcommand{\Prop}{%
+  \mathrm{Prop}%
+}
+
+\newcommand{\iProp}{%
+  \mathrm{iProp}%
+}
+\newcommand{\iSep}{%
+  \ast%
+}
+\newcommand{\iBigSep}{%
+  \scalerel*{\iSep}{\sum}%
+}
+\newcommand{\iWand}{%
+  \mathrel{-\mkern-6mu\iSep}%
+}
+\newcommand{\iBupd}{%
+  |\!\!\!\Rrightarrow%
+}
+\newcommand{\iPersistent}{%
+  \square%
+}
+\newcommand{\iTrue}{%
+  \mathrm{True}%
+}
+\newcommand{\iFalse}{%
+  \mathrm{False}%
+}
+\newcommand{\iPointsto}{%
+  \mapsto%
+}
+\newcommand{\iPred}{%
+  \Phi%
+}
+\newcommand{\iPredTwo}{%
+  \Psi%
+}
+\newcommand{\iProt}{%
+  \mathrm{X}%
+}
+\newcommand{\iSimilar}{%
+  \approx%
+}
+\newcommand{\iInBij}{%
+  \stackrel{\scriptscriptstyle\textrm{bij}}{\iSimilar}%
+}
+\newcommand{\iTie}{%
+  \leftrightarrow%
+}
+
+\newcommand{\iSimSymbol}{%
+  \mathrel{\scaleobj{0.75}{\gtrsim}}%
+}
+\newcommand{\iSim}[4][]{%
+  #3 \iSimSymbol #4 \,%
+  \ifx #1 \else \langle #1 \rangle \, \fi%
+  \left[ #2 \right]%
+}
+\newcommand{\iSimv}[4][]{%
+  #3 \iSimSymbol #4 \,%
+  \ifx #1 \else \langle #1 \rangle \, \fi%
+  \left\{ #2 \right\}%
+}
+\newcommand{\iSimHoare}[5][]{%
+  \left[ #2 \right] \ \iSim[#1]{#3}{#4}{#5}%
+}
+\newcommand{\iSimHoarePretty}[4]{%
+  \begin{array}{c}
+      \left[ #1 \right]
+    \\ \hline
+      #2 \ \iSimSymbol\ #3
+    \\ \hline
+      \left[ #4 \right]
+  \end{array}%
+}
+\newcommand{\iSimvHoare}[5][]{%
+  \left\{ #2 \right\} \ \iSimv[#1]{#3}{#4}{#5}%
+}
+\newcommand{\iSimvHoarePretty}[4]{%
+  \begin{array}{c}
+      \left\{ #1 \right\}
+    \\ \hline
+      #2 \ \iSimSymbol\ #3
+    \\ \hline
+      \left\{ #4 \right\}
+  \end{array}%
+}
+\newcommand{\iRsim}[4][]{%
+  #3 \geq #4 \,%
+  \ifx #1 \else \langle #1 \rangle \, \fi%
+  \left[ #2 \right]%
+}
+\newcommand{\iRsimv}[4][]{%
+  #3 \geq #4 \,%
+  \ifx #1 \else \langle #1 \rangle \, \fi%
+  \left\{ #2 \right\}%
+}
+\newcommand{\iRsimHoare}[5][]{%
+  \left[ #2 \right] \ \iRsim[#1]{#3}{#4}{#5}%
+}
+\newcommand{\iRsimvHoare}[5][]{%
+  \left\{ #2 \right\} \ \iRsimv[#1]{#3}{#4}{#5}%
+}

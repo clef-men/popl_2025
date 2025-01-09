@@ -1,0 +1,121 @@
+\begin{frame}{\DataLang: syntax}
+\centering
+\color{lightgray}
+\begin{tabular}{lclcl}
+    $\datalangIdx[]$
+    & $\ni$ &
+    $\datalangIdx$
+    & $\Coloneqq$ &
+    $\datalangZero \mid \datalangOne \mid \datalangTwo$
+  \\
+    $\datalangTag[]$
+    & $\ni$ &
+    $\datalangTag$
+  \\
+    $\datalangBool[]$
+    & $\ni$ &
+    $\datalangBool$
+	\\
+		$\datalangLoc[]$
+		& $\ni$ &
+		$\datalangLoc$
+  \\
+    $\datalangFn[]$
+    & $\ni$ &
+    $\datalangFn$
+  \\
+    $\datalangVar[]$
+    & $\ni$ &
+    $\datalangVar, \datalangVarTwo$
+	\\
+    $\datalangVal[]$
+    & $\ni$ &
+    $\datalangVal, \datalangValTwo$
+    & $\Coloneqq$ &
+    $\datalangUnit \mid \datalangIdx \mid \datalangTag \mid \datalangBool \mid \datalangLoc \mid \mathcolor{red}{\datalangFnptr{\datalangFn}}$
+  \\
+    $\datalangExpr[]$
+    & $\ni$ &
+    $\datalangExpr$
+    & $\Coloneqq$ &
+    $\datalangVal \mid \datalangVar \mid \datalangLet{\datalangVar}{\datalangExpr_1}{\datalangExpr_2} \mid \datalangCall{\datalangExpr_1}{\overline{\datalangExpr_2}}$
+  \\
+    &&
+    & | &
+    $\datalangEq{\datalangExpr_1}{\datalangExpr_2} \mid \datalangIf{\datalangExpr_0}{\datalangExpr_1}{\datalangExpr_2}$
+  \\
+    &&
+    & | &
+    $\mathcolor{orange}{\datalangBlock{\datalangTag}{\datalangExpr_1}{\datalangExpr_2}}$
+  \\
+    &&
+    & | &
+    $\datalangLoad{\datalangExpr_1}{\datalangExpr_2} \mid \datalangStore{\datalangExpr_1}{\datalangExpr_2}{\datalangExpr_3}$
+  \\
+    $\datalangDef[]$
+    & $\ni$ &
+    $\datalangDef$
+    & $\Coloneqq$ &
+    $\mathcolor{violet}{\datalangRec{\overline{\datalangVar}}{\datalangExpr}}$
+  \\
+    $\datalangProg[]$
+    & $\ni$ &
+    $\datalangProg$
+    & $\coloneqq$ &
+    $\mathcolor{blue}{\datalangFn[] \finmap \datalangDef[]}$
+  \\
+    $\datalangState[]$
+    & $\ni$ &
+    $\datalangState$
+    & $\coloneqq$ &
+    $\datalangLoc[] \finmap \datalangVal[]$
+  \\
+    $\datalangConfig[]$
+    & $\ni$ &
+    $\datalangConfig$
+    & $\coloneqq$ &
+    $\datalangExpr[] \times \datalangState[]$
+\end{tabular}
+\vfill
+\end{frame}
+
+\begin{frame}[fragile]{\DataLang: \texttt{map}}
+\begin{lstlisting}[basicstyle=\ttfamily\Large]
+%\textcolor{red}{map}% |-> fun f xs ->
+  match xs with
+  | [] ->
+      []
+  | x :: xs ->
+      let y = f x in
+      y :: @%\textcolor{red}{map}% f xs
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{\DataLang: \texttt{map} (transformed)}
+\begin{minipage}{.5\columnwidth}
+\begin{lstlisting}
+%\textcolor{red}{map\_dps}% |-> fun dst idx f xs ->
+  match xs with
+  | [] ->
+      dst.(idx) <- []
+  | x :: xs ->
+      let y = f x in
+      let dst' = y :: ?? in
+      dst.(idx) <- dst' ;
+      @%\textcolor{red}{map\_dps}% dst' 2 f xs
+\end{lstlisting}
+\end{minipage}
+\begin{minipage}{.49\columnwidth}
+\begin{lstlisting}
+map_dir |-> fun f xs ->
+  match xs with
+  | [] ->
+      []
+  | x :: xs ->
+      let y = f x in
+      let dst = y :: ?? in
+      @%\textcolor{red}{map\_dps}% dst 2 f xs ;
+      dst
+\end{lstlisting}
+\end{minipage}
+\end{frame}

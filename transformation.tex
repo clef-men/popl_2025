@@ -1,0 +1,154 @@
+\begin{frame}{TMC transformation}
+\LARGE
+\begin{mathpar}
+    \datalangExpr_s \tmcDir{\datalangRenaming} \datalangExpr_t
+  \and
+    \datalangDef_s \tmcDir{\datalangRenaming} \datalangDef_t
+  \\\\
+    (\datalangExpr_\mathit{dst}, \datalangExpr_\mathit{idx}, \datalangExpr_s) \tmcDps{\datalangRenaming} \datalangExpr_t
+  \and
+    \datalangDef_s \tmcDps{\datalangRenaming} \datalangDef_t
+  \\\\
+    \datalangProg_s \tmc \datalangProg_t
+\end{mathpar}
+\end{frame}
+
+\begin{frame}{Transformation soundness}
+\large
+\centering
+\begin{tabular}{ccc}
+    $\datalangProg_s \tmc \datalangProg_t$
+    &&
+    program $\datalangProg_s$ transforms into program $\datalangProg_t$
+  \\\\
+  \onslide<4->{
+    $\Downarrow$
+  \\\\
+    $\datalangProg_s \iSimSymbol \datalangProg_t$
+    &&
+    program $\datalangProg_t$ simulates program $\datalangProg_s$
+  \\
+    &&
+    (\emph{relational separation logic}, \Simuliris)
+  }
+  \\\\
+    $\Downarrow$
+  \\\\
+    $\datalangProg_s \refined \datalangProg_t$
+    &&
+    program $\datalangProg_t$ refines program $\datalangProg_s$
+  \\
+    &&
+    (termination-preserving refinement)
+\end{tabular}
+\begin{overbox}<2>
+  \centering
+  \textbf{Termination-preserving behavioral refinement} \\
+  \bigskip
+  \begin{tabular}{rcl}
+      $\datalangProg_s \mathcolor{magenta}{\refined} \datalangProg_t$
+      & $\coloneqq$ &
+      $\forall \datalangFn \in \dom{\datalangProg_s}, \datalangVal_s, \datalangVal_t \ldotp$
+    \\
+      &&
+      $\wf{\datalangVal_s} \wedge \datalangVal_s \similar \datalangVal_t \implies$
+    \\
+      &&
+      $\datalangCall{\datalangFnptr{\datalangFn}}{\datalangVal_s} \mathcolor{orange}{\refined} \datalangCall{\datalangFnptr{\datalangFn}}{\datalangVal_t}$
+    \\\\
+      $\datalangExpr_s \mathcolor{orange}{\refined} \datalangExpr_t$
+      & $\coloneqq$ &
+      $\forall b_t \in \mathcolor{cyan}{\mathrm{behaviours}}_{\datalangProg_t} (\datalangExpr_t) \ldotp$
+    \\
+      &&
+      $\exists b_s \in \mathcolor{cyan}{\mathrm{behaviours}}_{\datalangProg_s} (\datalangExpr_s) \ldotp
+          b_s \mathcolor{blue}{\refined} b_t$
+    \\\\
+      $\mathcolor{cyan}{\mathrm{behaviours}}_{\datalangProg} (\datalangExpr)$
+      & $\coloneqq$ &
+      $\{ \constr[\datalangExpr']{Conv} \mid \dots \} \uplus \{ \constr{Div} \mid \diverges{\datalangProg}{(\datalangExpr, \emptyset)} \}$
+  \end{tabular}
+\end{overbox}
+\begin{overbox}<5>
+  \centering
+  \textbf{Relational separation logic}
+  \begin{mathpar}
+    \inferrule*[lab=rel-pure]
+      {
+        \mathcolor{blue}{\datalangExpr_s} \pureStep{\mathcolor{blue}{p_s}} \mathcolor{blue}{\datalangExpr_s'}
+      \and
+        \mathcolor{magenta}{\datalangExpr_t} \pureStep{\mathcolor{magenta}{p_t}}\mathcolor{magenta}{\datalangExpr_t'}
+      \and
+        \iSim{
+          \iPred
+        }{
+          \mathcolor{blue}{\datalangExpr_s'}
+        }{
+          \mathcolor{magenta}{\datalangExpr_t'}
+        }
+      }{
+        \iSim{
+          \iPred
+        }{
+          \mathcolor{blue}{\datalangExpr_s}
+        }{
+          \mathcolor{magenta}{\datalangExpr_t}
+        }
+      }
+    \\
+    \inferrule*[lab=rel-source-load]
+      {
+        (\mathcolor{blue}{\datalangLoc} + \mathcolor{blue}{\datalangIdx}) \iPointsto_s \mathcolor{blue}{\datalangVal_s}
+      \and
+        (\mathcolor{blue}{\datalangLoc} + \mathcolor{blue}{\datalangIdx}) \iPointsto_s \mathcolor{blue}{\datalangVal_s} \iWand
+        \iSim{\iPred}{\mathcolor{blue}{\datalangVal_s}}{\mathcolor{magenta}{\datalangExpr_t}}
+      }{
+        \iSim{\iPred}{\datalangLoad{\mathcolor{blue}{\datalangLoc}}{\mathcolor{blue}{\datalangIdx}}}{\mathcolor{magenta}{\datalangExpr_t}}
+      }
+    \\
+    \inferrule*[lab=rel-target-load]
+      {
+        (\mathcolor{magenta}{\datalangLoc} + \mathcolor{magenta}{\datalangIdx}) \iPointsto_t \mathcolor{magenta}{\datalangVal_t}
+      \and
+        (\mathcolor{magenta}{\datalangLoc} + \mathcolor{magenta}{\datalangIdx}) \iPointsto_t \mathcolor{magenta}{\datalangVal_t} \iWand
+        \iSim{\iPred}{\mathcolor{blue}{\datalangExpr_s}}{\mathcolor{magenta}{\datalangVal_t}}
+      }{
+        \iSim{\iPred}{\mathcolor{blue}{\datalangExpr_s}}{\datalangLoad{\mathcolor{magenta}{\datalangLoc}}{\mathcolor{magenta}{\datalangIdx}}}
+      }
+  \end{mathpar}
+\end{overbox}
+\begin{overbox}<6>
+  \centering
+  \textbf{Abstract protocols \\ (calling conventions)}
+  \medskip
+  \begin{mathpar}
+    \inferrule*[lab=rel-protocol]
+      {
+        \mathcolor{red}{\iProt} (\datalangExpr_s, \datalangExpr_t, \mathcolor{brown}{\iPredTwo})
+      \and
+        \forall \datalangExpr_s', \datalangExpr_t' \ldotp
+        \mathcolor{brown}{\iPredTwo} (\datalangExpr_s', \datalangExpr_t') \iWand
+        \iSim[
+          \mathcolor{red}{\iProt}
+        ]{
+          \iPred
+        }{
+          \datalangExpr_s'
+        }{
+          \datalangExpr_t'
+        }
+      }{
+        \iSim[
+          \mathcolor{red}{\iProt}
+        ]{
+          \iPred
+        }{
+          \datalangExpr_s
+        }{
+          \datalangExpr_t
+        }
+      }
+  \end{mathpar}
+\end{overbox}
+\only<7>{}
+\end{frame}

@@ -1,0 +1,88 @@
+\RequirePackage{listings}
+\RequirePackage[lighttt]{lmodern}
+
+\lstset{
+  keepspaces=true,
+  texcl=false,
+  sensitive=true,
+  showstringspaces=false,
+  tabsize=2,
+  extendedchars=false,
+  breaklines=false,
+  basicstyle=\ttfamily\small,
+  captionpos=b,
+  flexiblecolumns=false,
+  mathescape=true,
+%
+  alsoletter={
+    '
+  },
+%
+  keywords=[1]{
+    and,
+    as,
+    assert,
+    asr,
+    begin,
+    class,
+    closed,
+    constraint,
+    do,
+    done,
+    downto,
+    else,
+    end,
+    external,
+    false,
+    for,
+    fun,
+    function,
+    functor,
+    if,
+    in,
+    include,
+    inherit,
+    land,
+    lazy,
+    let,
+    lor,
+    lsl,
+    lsr,
+    lxor,
+    match,
+    method,
+    mod,
+    module,
+    mutable,
+    new,
+    not,
+    object,
+    of,
+    open,
+    or,
+    parser,
+    private,
+    rec,
+    repeat,
+    sig,
+    struct,
+    then,
+    to,
+    true,
+    try,
+    type,
+    val,
+    virtual,
+    when,
+    while,
+    with,
+  },
+%
+  literate=*
+    {->}{{$\rightarrow$}}2
+    {<-}{{$\leftarrow$}}1
+    {|->}{$\coloneqq$}2
+    {??}{{$\datalangHole$}}1,
+%
+  escapechar=\%,
+}

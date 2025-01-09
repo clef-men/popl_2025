@@ -1,0 +1,144 @@
+\begin{frame}{Simulation}
+\begin{adjustwidth}{-1.5em}{-1.5em}
+\scriptsize
+\begin{align*}
+		\mathrm{sim \mathhyphen body}_\iProt
+		&\coloneqq
+		\begin{array}{l}
+				\lambdaAbs sim \ldotp
+				\lambdaAbs sim \mathhyphen inner \ldotp
+				\lambdaAbs {(\iPred, \datalangExpr_s, \datalangExpr_t)} \ldotp
+				\forall \datalangState_s, \datalangState_s \ldotp
+				\mathrm{I} (\datalangState_s, \datalangState_t)
+				\iWand \iBupd
+			\\
+				\bigvee \left[ \begin{array}{ll}
+							\circled{1}
+						&
+							\mathrm{I} (\datalangState_s, \datalangState_t) \iSep
+							\iPred (\datalangExpr_s, \datalangExpr_t)
+					\\
+					        \circled{2}
+                        &
+                            \mathrm{I} (\datalangState_s, \datalangState_t) \iSep
+							\mathrm{strongly \mathhyphen stuck}_{\datalangProg_s} (\datalangExpr_s) \iSep
+							\mathrm{strongly \mathhyphen stuck}_{\datalangProg_t} (\datalangExpr_s)
+					\\
+							\circled{3}
+						&
+							\exists \datalangExpr_s', \datalangState_s' \ldotp
+							(\datalangExpr_s, \datalangState_s) \step{\datalangProg_s}^+ (\datalangExpr_s', \datalangState_s') \iSep
+							\mathrm{I} (\datalangState_s', \datalangState_t) \iSep
+							sim \mathhyphen inner (\iPred, \datalangExpr_s', \datalangExpr_t)
+					\\
+							\circled{4}
+						&
+							\mathrm{reducible}_{\datalangProg_t} (\datalangExpr_t, \datalangState_t) \iSep
+							\forall \datalangExpr_t', \datalangState_t' \ldotp
+							(\datalangExpr_t, \datalangState_t) \step{\datalangProg_t} (\datalangExpr_t', \datalangState_t')
+							\iWand \iBupd
+					\\
+                        &
+							\bigvee \left[ \begin{array}{ll}
+										\circled{A}
+									&
+										\mathrm{I} (\datalangState_s, \datalangState_t') \iSep
+										sim \mathhyphen inner (\iPred, \datalangExpr_s, \datalangExpr_t')
+								\\
+										\circled{B}
+									&
+										\exists \datalangExpr_s', \datalangState_s' \ldotp
+										(\datalangExpr_s, \datalangState_s) \step{\datalangProg_s}^+ (\datalangExpr_s', \datalangState_s') \iSep {}
+								\\
+								    &
+										\mathrm{I} (\datalangState_s', \datalangState_t') \iSep
+										sim (\iPred, \datalangExpr_s', \datalangExpr_t')
+							\end{array} \right.
+					\\
+							\circled{5}
+						&
+							\exists \datalangEctx_s, \datalangExpr_s', \datalangEctx_t, \datalangExpr_t', \iPredTwo \ldotp
+					\\
+					    &
+					        \datalangExpr_s = \datalangEctx_s [\datalangExpr_s'] \iSep
+							\datalangExpr_t = \datalangEctx_t [\datalangExpr_t'] \iSep
+						    \iProt (\iPredTwo, \datalangExpr_s', \datalangExpr_t') \iSep
+						    \mathrm{I} (\datalangState_s, \datalangState_t) \iSep {}
+					\\
+                        &
+							\forall \datalangExpr_s'', \datalangExpr_t'' \ldotp
+							\iPredTwo (\datalangExpr_s'', \datalangExpr_t'') \iWand
+							sim \mathhyphen inner (\iPred, \datalangEctx_s [\datalangExpr_s''], \datalangEctx_t [\datalangExpr_t''])
+				\end{array} \right.
+		\end{array}
+	\\
+	    \mathrm{sim \mathhyphen inner}_\iProt
+	    &\coloneqq
+	    \lambdaAbs sim \ldotp
+	    \muAbs sim \mathhyphen inner \ldotp
+	    \mathrm{sim \mathhyphen body}_\iProt (sim, sim \mathhyphen inner)
+	\\
+		\mathrm{sim}_\iProt
+		&\coloneqq
+		\nuAbs sim \ldotp
+		\mathrm{sim \mathhyphen inner}_\iProt (sim)
+	\\
+		\iSim[\iProt]{\iPred}{\datalangExpr_s}{\datalangExpr_t}
+		&\coloneqq
+		\mathrm{sim}_\iProt (\iPred, \datalangExpr_s, \datalangExpr_t)
+	\\
+	   \iSimv[\iProt]{\iPred}{\datalangExpr_s}{\datalangExpr_t}
+	   &\coloneqq
+	   \iSim[\iProt]{\lambdaAbs (\datalangExpr_s', \datalangExpr_t') \ldotp \exists \datalangVal_s, \datalangVal_t \ldotp \datalangExpr_s' = \datalangVal_s \iSep \datalangExpr_t' = \datalangVal_t \iSep \iPred (\datalangVal_s, \datalangVal_t)}{\datalangExpr_s}{\datalangExpr_t}
+\end{align*}
+\end{adjustwidth}
+\end{frame}
+
+\begin{frame}{TMC protocol}
+\begin{adjustwidth}{-1.5em}{-1.5em}
+\begin{tabular}{rcl}
+        $\iProt_\mathrm{dir} (\iPredTwo, \datalangExpr_s, \datalangExpr_t)$
+        & $\coloneqq$ &
+        $\exists \datalangFn, \datalangVal_s, \datalangVal_t \ldotp$
+    \\
+        &&
+        $\datalangFn \in \dom{\datalangProg_s} \iSep {}$
+    \\
+        &&
+        $\datalangExpr_s = \datalangCall{\datalangFnptr{\datalangFn}}{\datalangVal_s} \iSep
+        \datalangExpr_t = \datalangCall{\datalangFnptr{\datalangFn}}{\datalangVal_t} \iSep
+        \datalangVal_s \iSimilar \datalangVal_t \iSep {}$
+    \\
+        &&
+        $\forall \datalangVal_s', \datalangVal_t' \ldotp
+        \datalangVal_s' \iSimilar \datalangVal_t' \iWand
+        \iPredTwo (\datalangVal_s', \datalangVal_t')$
+    \\\\
+        $\iProt_\mathrm{DPS} (\iPredTwo, \datalangExpr_s, \datalangExpr_t)$
+        & $\coloneqq$ &
+        $\exists \datalangFn, \datalangFn_\mathit{dps}, \datalangVal_s, \datalangLoc, \datalangIdx, \datalangVal_t \ldotp$
+    \\
+        &&
+        $\datalangFn \in \dom{\datalangProg_s} \iSep
+        \datalangRenaming [\datalangFn] = \datalangFn_\mathit{dps} \iSep {}$
+    \\
+        &&
+        $\datalangExpr_s = \datalangCall{\datalangFnptr{\datalangFn}}{\datalangVal_s} \iSep
+        \datalangExpr_t = \datalangCall{\datalangFnptr{\datalangFn_\mathit{dps}}}{\datalangPair{\datalangPair{\datalangLoc}{\datalangIdx}}{\datalangVal_t}} \iSep
+        \datalangVal_s \iSimilar \datalangVal_t \iSep {}$
+    \\
+        &&
+        $(\datalangLoc + \datalangIdx) \iPointsto \datalangHole \iSep {}$
+    \\
+        &&
+        $\forall \datalangVal_s', \datalangVal_t' \ldotp
+        (\datalangLoc + \datalangIdx) \iPointsto \datalangVal_t' \iSep
+        \datalangVal_s' \iSimilar \datalangVal_t' \iWand
+        \iPredTwo (\datalangVal_s', \datalangUnit)$
+    \\\\
+        $\iProt_\mathrm{TMC}$
+        & $\coloneqq$ &
+        $\iProt_\mathrm{dir} \sqcup \iProt_\mathrm{DPS}$
+\end{tabular}
+\end{adjustwidth}
+\end{frame}

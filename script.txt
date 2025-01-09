@@ -1,0 +1,127 @@
+Hi.
+My name is Clément Allain.
+This is joint work with Frédéric Bour, Basile Clément, François Pottier and Gabriel Scherer.
+I will talk about how we implemented the *Tail Modulo Constructor* transformation in the OCaml compiler and proved it sound using *relational separation logic*.
+
+---
+
+Consider the well-known "map" function on lists.
+Here is its most natural implementation, which is a simple recursive function.
+It is elegant and quite efficient, but there is a slight problem:
+If you feed this function large-enough lists, you get a "Stack overflow" exception.
+You may already know why this happens.
+This happens because this implementation is not *tail-recursive*.
+In other words, the recursive call to "map" is not in tail position.
+In other words, it is not the last thing the function does before returning.
+This means the compiler cannot optimize "map" to be stack-efficient, to recycle the stack frame.
+Therefore, the space complexity is linear in the size of the input list.
+This is why the stack explodes.
+
+---
+
+Now, there is a well-known trick to make this function tail-recursive:
+You can rewrite in *accumulator-passing style*.
+You introduce an additional parameter that is an accumulator and you "cons" transformed values onto this accumulator.
+By doing that, you are contructing the resulting list in reverse, so you also have to reverse it at the end.
+This means we are doing two traversals.
+Therefore, this implementation is tail-recursive — no more stack overflow —, but less efficient than the natural implementation.
+The question is then: can we do better?
+Can we construct the resulting list directly in the right order?
+In safe OCaml, we can't, since we cannot mutate constructors.
+
+---
+
+However, let's imagine for a moment that we can do it.
+Let's imagine that we have a new "set_field" primitive that allows modifying constructor fields.
+Using this primitive, we can rewrite "map" again in *destination-passing style*.
+As before, we introduce an additional parameter that is the destination where the function must write the result.
+Instead of returning the result, we write it in the given destination.
+Here, the destination is actually the last cell of the resulting list that needs to be filled.
+This implementation is also tail-recursive, no stack overflow.
+
+---
+
+The problem with this version is that it can only be implemented using unsafe features of the language.
+In this work, we have implemented a general transformation, called *Tail Modulo Constructor*, that achieves the same goal but happens in the OCaml compiler in a safe way.
+Basically, this transformation extends the usual tail-recursive fragment to include recursive calls under constructors — modulo constructors.
+
+---
+
+To summarize this contribution, this program transformation is *safe*: it is implemented directly in the OCaml compiler.
+It is explicit: users have to annotate functions to be transformed.
+It is quite general: it works on any ADT and supports mutually recursive functions.
+Also, in the paper, you find implementation details, benchmarks and a survey on the feature adoption by the OCaml community.
+Finally, we also provide a proof of soundness in a simplified setting, which I will talk about in the rest of this talk.
+
+---
+
+To express the transformation soundness and prove it, we need to make things more formal first.
+To do this, I will be using the following untyped language, which is fairly standard.
+Remarkably, it features mutable heap cells, with only two fields.
+A program in this language is a map that associates definitions to function names.
+We can refer to defined functions in expressions using function names.
+Actually, it is not exactly the language used in the OCaml compiler to implement TMC, but it is enough to capture the essence of the transformation.
+
+---
+
+In this language, we can write the natural implementation of "map".
+
+---
+
+We can also write the destination-passing style version of "map".
+To realize the "set_field" primitive that we had before, we introduced a simple assignment to the second field of the destination.
+
+---
+
+More generally, we can express the full TMC transformation.
+Actually, we have two transformations: a direct transformation that respects the original calling convention and a DPS transformation that changes the calling convention.
+These transformations are relations because TMC is non-deterministic; we want to capture all the possible choices that can be made.
+In the end, we get this program transformation: "pₛ transforms into pₜ".
+
+---
+
+Now, let's talk about the soundness statement.
+We want to show that, if program pₛ transforms into program pₜ, program pₜ refines program pₛ.
+
+This last statement is a termination-preserving behavioral refinement.
+This means that we are considering the behaviors of a function in the source and transformed programs, and we are saying that all behaviours of the transformed program are behaviours of the source program.
+This refinement is termination-preserving as we are also considering diverging executions.
+
+Now, to prove this, we follow the same methodology as in *Simuliris*, that is to say we enter relational separation logic.
+More precisely, we prove a program relation in separation logic that implies program refinement.
+Just to make things clear, by "relational separation logic", I mean a set of reasoning rules on a binary relation.
+"Separation" means that we can reason about the ownership of resources, in particular the "points-to" resource that represents exclusive access to a memory cell.
+In this work, we also introduced the crucial "REL-PROTOCOL" rule that allows using an abstract protocol to express different calling conventions like destination-passing style.
+I will come back to this rule in a moment.
+
+---
+
+Now, I claim that the core of the proof consists in proving these two specifications for the two transformations.
+Here, we have specialized them ot "map", but it works the same in general.
+Let's see what we put in these pre- and postconditions.
+
+---
+
+For the direct transformation, it is straightforward.
+We say that, given two similar input values, "map" computes similar output values.
+In the logic, this corresponds to the following "REL-DIR" rule, which actually comes from Simuliris.
+
+---
+
+For the DPS transformation, we say that: given two similar input values and the ownership of the destination in the transformed program, the two functions computes similar values but the transformed program writes it into the destination instead of returning it.
+In short, this is the essence of destination-paassing style.
+In the logic, this corresponds to the following "REL-DPS" rule.
+In fact, this rule derives from the more general "REL-PROTOCOL" rules taht we have seen earlier.
+This rules allows reasoning about different calling conventions by parameterizing the relation by an abstract protocol.
+Concretely, the protocol we use just rephrases the two specifications we have given.
+Conceptually, this is basically a coinduction hypothesis, that allows applying the specifications while we are proving them.
+Crucially, not any protocol is valid: it must satisfy a specific criterion that I haven't shown here.
+Also, this works for other calling conventions.
+In the paper, we have used it to verify other transformations like accumulator-passing style and inlining.
+
+---
+
+To conclude, we have:
+1) implemented the Tail Modulo Constructor transformation in the OCaml compiler,
+2) verified its soundness using relational separation logic, and
+3) verified other program transformations using abstract protocols.

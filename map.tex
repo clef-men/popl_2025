@@ -1,0 +1,168 @@
+\begin{frame}[fragile]{\texttt{map}: natural implementation}
+\begin{lstlisting}
+let rec %\textcolor{red}{map}% f xs =
+  match xs with
+  | [] ->
+      []
+  | x :: xs ->
+      let y = f x in
+      %\textcolor{cyan}{y ::}% %\textcolor{red}{map}% f xs
+\end{lstlisting}
+\vfill
+\begin{lstlisting}
+# List.init 250_000 (fun _ -> ())
+  |> map Fun.id
+  |> ignore
+  ;;
+Stack overflow during evaluation (looping recursion?).
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{map}: accumulator-passing style}
+\begin{minipage}{0.5\linewidth}
+\begin{lstlisting}
+let rec %\textcolor{red}{map\_aps}% %\textcolor{cyan}{acc}% f xs =
+  match xs with
+  | [] ->
+      List.rev acc
+  | x :: xs ->
+      let y = f x in
+      %\textcolor{red}{map\_aps}% %\textcolor{cyan}{(y ::\ acc)}% f xs
+\end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.45\linewidth}
+\begin{lstlisting}
+let map xs =
+  %\textcolor{red}{map\_aps}% [] f xs
+
+
+
+
+%%
+\end{lstlisting}
+\end{minipage}
+\vfill
+\begin{lstlisting}
+# List.init 250_000 (fun _ -> ())
+  |> map Fun.id
+  |> ignore
+  ;;
+- : unit = ()
+\end{lstlisting}
+\end{frame}
+
+%\begin{frame}{\texttt{map}: accumulator-passing style}
+%\centering
+%\begin{tikzpicture}[yscale=-1]
+%    \draw [fill=cyan, fill opacity=0.4, dashed] (0,0) rectangle (3,1) node [pos=.5] {\texttt{acc}} ;
+%    \draw [fill=magenta, fill opacity=0.4] (4,0) rectangle (5,1) node [pos=.5] {\texttt{x}} ;
+%    \draw [fill=magenta, fill opacity=0.4, dashed] (6,0) rectangle (9,1) node [pos=.5] {\texttt{xs}} ;
+%    \draw [thick, ->] (5,0.5) -- (6,0.5) ;
+%    
+%    \draw [fill=cyan, fill opacity=0.4, dashed] (0,1.5) rectangle (3,2.5) node [pos=.5] {\texttt{acc}} ;
+%    \draw [fill=cyan, fill opacity=0.4] (4,1.5) rectangle (5,2.5) node [pos=.5] {\texttt{f x}} ;
+%    \draw [fill=magenta, fill opacity=0.4, dashed] (6,1.5) rectangle (9,2.5) node [pos=.5] {\texttt{xs}} ;
+%    
+%    \draw [fill=cyan, fill opacity=0.4, dashed] (0,3) rectangle (3,4) node [pos=.5] {\texttt{acc}} ;
+%    \draw [fill=cyan, fill opacity=0.4] (4,3) rectangle (5,4) node [pos=.5] {\texttt{f x}} ;
+%    \draw [fill=magenta, fill opacity=0.4, dashed] (6,3) rectangle (9,4) node [pos=.5] {\texttt{xs}} ;
+%    \draw [thick, ->] (4,3.5) -- (3,3.5) ;
+%\end{tikzpicture}
+%\end{frame}
+%
+%\begin{frame}{\texttt{map}: can we do better?}
+%\centering
+%\begin{tikzpicture}[yscale=-1]
+%    \draw [fill=cyan, fill opacity=0.4, dashed] (0,0) rectangle (3,1) node [pos=.5] {\texttt{acc}} ;
+%    \draw [fill=magenta, fill opacity=0.4] (4,0) rectangle (5,1) node [pos=.5] {\texttt{x}} ;
+%    \draw [fill=magenta, fill opacity=0.4, dashed] (6,0) rectangle (9,1) node [pos=.5] {\texttt{xs}} ;
+%    \draw [thick, ->] (5,0.5) -- (6,0.5) ;
+%    
+%    \draw [fill=cyan, fill opacity=0.4, dashed] (0,1.5) rectangle (3,2.5) node [pos=.5] {\texttt{acc}} ;
+%    \draw [fill=cyan, fill opacity=0.4] (4,1.5) rectangle (5,2.5) node [pos=.5] {\texttt{f x}} ;
+%    \draw [fill=magenta, fill opacity=0.4, dashed] (6,1.5) rectangle (9,2.5) node [pos=.5] {\texttt{xs}} ;
+%    
+%    \draw [fill=cyan, fill opacity=0.4, dashed] (0,3) rectangle (3,4) node [pos=.5] {\texttt{acc}} ;
+%    \draw [fill=cyan, fill opacity=0.4] (4,3) rectangle (5,4) node [pos=.5] {\texttt{f x}} ;
+%    \draw [fill=magenta, fill opacity=0.4, dashed] (6,3) rectangle (9,4) node [pos=.5] {\texttt{xs}} ;
+%    \draw [thick, ->] (3,3.5) -- (4,3.5) ;
+%\end{tikzpicture}
+%\end{frame}
+
+\begin{frame}[fragile]{\texttt{map}: destination-passing style}
+\begin{minipage}{0.5\linewidth}
+\begin{lstlisting}
+let rec %\textcolor{red}{map\_dps}% %\textcolor{cyan}{dst}% f xs =
+  match xs with
+  | [] ->
+      %\textcolor{olive}{set\_field dst 1 []}%
+  | x :: xs ->
+      let y = f x in
+      let dst' = y :: %\textcolor{olive}{\_}% in
+      %\textcolor{olive}{set\_field dst 1 dst'}% ;
+      %\textcolor{red}{map\_dps}% %\textcolor{cyan}{dst'}% f xs
+\end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.45\linewidth}
+\begin{lstlisting}
+let map f xs =
+  match xs with
+  | [] ->
+      []
+  | x :: xs ->
+      let y = f x in
+      let dst = y :: %\textcolor{olive}{\_}% in
+      %\textcolor{red}{map\_dps}% dst f xs ;
+      dst
+\end{lstlisting}
+\end{minipage}
+\vfill
+\begin{lstlisting}
+# List.init 250_000 (fun _ -> ())
+  |> map Fun.id
+  |> ignore
+  ;;
+- : unit = ()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{map}: Tail Modulo Constructor (TMC)}
+\begin{lstlisting}
+let%\textcolor{olive}{[@tail\_mod\_cons]}% rec %\textcolor{red}{map}% f xs =
+  match xs with
+  | [] ->
+      []
+  | x :: xs ->
+      let y = f x in
+      %\textcolor{cyan}{y ::}% %\textcolor{red}{map}% f xs
+\end{lstlisting}
+\vfill
+\begin{lstlisting}
+# List.init 250_000 (fun _ -> ())
+  |> map Fun.id
+  |> ignore
+  ;;
+- : unit = ()
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{TMC transformation}
+\large
+\begin{itemize}
+  \setlength\itemsep{0.3em}
+  \item \textbf{Safe:} performed by the \OCaml compiler.
+  \item \textbf{Explicit:} \texttt{[@tail\_mod\_cons]} annotation.
+  \setlength\itemsep{1.7em}
+  \item \textbf{Generality:}
+    \begin{itemize}
+      \item Works on any algebraic data type (lists, trees, \etc).
+      \item Supports mutually recursive functions.
+    \end{itemize}
+  \item \textbf{Implementation details:} see the paper.
+  \setlength\itemsep{0.3em}
+  \item \textbf{Performance:} see benchmarks in the paper.
+  \item \textbf{Feature adoption:} see survey in the paper.
+  \setlength\itemsep{1.7em}
+  \item \textbf{Soundness:} formally verified in \Coq in an simplified setting \dots
+\end{itemize}
+\end{frame}
