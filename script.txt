@@ -20,7 +20,7 @@ This is why the stack explodes.
 ---
 
 Now, there is a well-known trick to make this function tail-recursive:
-You can rewrite in *accumulator-passing style*.
+You can rewrite it in *accumulator-passing style*.
 You introduce an additional parameter that is an accumulator and you "cons" transformed values onto this accumulator.
 By doing that, you are contructing the resulting list in reverse, so you also have to reverse it at the end.
 This means we are doing two traversals.
