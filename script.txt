@@ -111,10 +111,10 @@ In the logic, this corresponds to the following "REL-DIR" rule, which actually c
 For the DPS transformation, we say that: given two similar input values and the ownership of the destination in the transformed program, the two functions computes similar values but the transformed program writes it into the destination instead of returning it.
 In short, this is the essence of destination-paassing style.
 In the logic, this corresponds to the following "REL-DPS" rule.
-In fact, this rule derives from the more general "REL-PROTOCOL" rules taht we have seen earlier.
+In fact, this rule derives from the more general "REL-PROTOCOL" rules that we have seen earlier.
 This rules allows reasoning about different calling conventions by parameterizing the relation by an abstract protocol.
 Concretely, the protocol we use just rephrases the two specifications we have given.
-Conceptually, this is basically a coinduction hypothesis, that allows applying the specifications while we are proving them.
+Conceptually, this is basically a coinduction hypothesis internalized in the relation, that allows applying the specifications while we are proving them.
 Crucially, not any protocol is valid: it must satisfy a specific criterion that I haven't shown here.
 Also, this works for other calling conventions.
 In the paper, we have used it to verify other transformations like accumulator-passing style and inlining.
