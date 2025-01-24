@@ -1,12 +1,11 @@
 \begin{frame}{Simulation}
-\begin{adjustwidth}{-1.5em}{-1.5em}
 \scriptsize
 \begin{align*}
 		\mathrm{sim \mathhyphen body}_\iProt
 		&\coloneqq
 		\begin{array}{l}
-				\lambdaAbs sim \ldotp
-				\lambdaAbs sim \mathhyphen inner \ldotp
+				\lambdaAbs \textcolor{\iSimGfpColor}{sim} \ldotp
+				\lambdaAbs \textcolor{\iSimLfpColor}{sim \mathhyphen inner} \ldotp
 				\lambdaAbs {(\iPred, \datalangExpr_s, \datalangExpr_t)} \ldotp
 				\forall \datalangState_s, \datalangState_s \ldotp
 				\mathrm{I} (\datalangState_s, \datalangState_t)
@@ -29,31 +28,29 @@
 							\exists \datalangExpr_s', \datalangState_s' \ldotp
 							(\datalangExpr_s, \datalangState_s) \step{\datalangProg_s}^+ (\datalangExpr_s', \datalangState_s') \iSep
 							\mathrm{I} (\datalangState_s', \datalangState_t) \iSep
-							sim \mathhyphen inner (\iPred, \datalangExpr_s', \datalangExpr_t)
+							\textcolor{\iSimLfpColor}{sim \mathhyphen inner} (\iPred, \datalangExpr_s', \datalangExpr_t)
 					\\
 							\circled{4}
 						&
-							\mathrm{reducible}_{\datalangProg_t} (\datalangExpr_t, \datalangState_t) \iSep
-							\forall \datalangExpr_t', \datalangState_t' \ldotp
-							(\datalangExpr_t, \datalangState_t) \step{\datalangProg_t} (\datalangExpr_t', \datalangState_t')
-							\iWand \iBupd
-					\\
+						\mathrm{reducible}_{\datalangProg_t} (\datalangExpr_t, \datalangState_t) \iSep
+						\forall \datalangExpr_t', \datalangState_t' \ldotp
+						(\datalangExpr_t, \datalangState_t) \step{\datalangProg_t} (\datalangExpr_t', \datalangState_t')
+						\iWand \iBupd
+				\\
                         &
-							\bigvee \left[ \begin{array}{ll}
-										\circled{A}
-									&
-										\mathrm{I} (\datalangState_s, \datalangState_t') \iSep
-										sim \mathhyphen inner (\iPred, \datalangExpr_s, \datalangExpr_t')
-								\\
-										\circled{B}
-									&
-										\exists \datalangExpr_s', \datalangState_s' \ldotp
-										(\datalangExpr_s, \datalangState_s) \step{\datalangProg_s}^+ (\datalangExpr_s', \datalangState_s') \iSep {}
-								\\
-								    &
-										\mathrm{I} (\datalangState_s', \datalangState_t') \iSep
-										sim (\iPred, \datalangExpr_s', \datalangExpr_t')
-							\end{array} \right.
+						\bigvee \left[ \begin{array}{ll}
+									\circled{A}
+								&
+									\mathrm{I} (\datalangState_s, \datalangState_t') \iSep
+									\textcolor{\iSimLfpColor}{sim \mathhyphen inner} (\iPred, \datalangExpr_s, \datalangExpr_t')
+							\\
+									\circled{B}
+								&
+									\exists \datalangExpr_s', \datalangState_s' \ldotp
+									(\datalangExpr_s, \datalangState_s) \step{\datalangProg_s}^+ (\datalangExpr_s', \datalangState_s') \iSep
+									\mathrm{I} (\datalangState_s', \datalangState_t') \iSep
+									\textcolor{\iSimGfpColor}{sim} (\iPred, \datalangExpr_s', \datalangExpr_t')
+						\end{array} \right.
 					\\
 							\circled{5}
 						&
@@ -66,36 +63,51 @@
 						    \mathrm{I} (\datalangState_s, \datalangState_t) \iSep {}
 					\\
                         &
-							\forall \datalangExpr_s'', \datalangExpr_t'' \ldotp
-							\iPredTwo (\datalangExpr_s'', \datalangExpr_t'') \iWand
-							sim \mathhyphen inner (\iPred, \datalangEctx_s [\datalangExpr_s''], \datalangEctx_t [\datalangExpr_t''])
+						\forall \datalangExpr_s'', \datalangExpr_t'' \ldotp
+						\iPredTwo (\datalangExpr_s'', \datalangExpr_t'') \iWand
+						\textcolor{\iSimLfpColor}{sim \mathhyphen inner} (\iPred, \datalangEctx_s [\datalangExpr_s''], \datalangEctx_t [\datalangExpr_t''])
 				\end{array} \right.
 		\end{array}
 	\\
-	    \mathrm{sim \mathhyphen inner}_\iProt
+	    \mathrm{\color{\iSimLfpColor}{sim \mathhyphen inner}}_\iProt
 	    &\coloneqq
-	    \lambdaAbs sim \ldotp
-	    \muAbs sim \mathhyphen inner \ldotp
-	    \mathrm{sim \mathhyphen body}_\iProt (sim, sim \mathhyphen inner)
+	    \lambdaAbs \textcolor{\iSimGfpColor}{sim} \ldotp
+	    \muAbs \textcolor{\iSimLfpColor}{sim \mathhyphen inner} \ldotp
+	    \mathrm{sim \mathhyphen body}_\iProt (sim, \textcolor{\iSimLfpColor}{sim \mathhyphen inner})
 	\\
-		\mathrm{sim}_\iProt
+		\mathrm{\color{\iSimGfpColor}{sim}}_\iProt
 		&\coloneqq
-		\nuAbs sim \ldotp
-		\mathrm{sim \mathhyphen inner}_\iProt (sim)
+		\nuAbs \textcolor{\iSimGfpColor}{sim} \ldotp
+		\mathrm{\color{\iSimLfpColor}{sim \mathhyphen inner}}_\iProt (\textcolor{\iSimGfpColor}{sim})
 	\\
 		\iSim[\iProt]{\iPred}{\datalangExpr_s}{\datalangExpr_t}
 		&\coloneqq
-		\mathrm{sim}_\iProt (\iPred, \datalangExpr_s, \datalangExpr_t)
+		\mathrm{\color{\iSimGfpColor}{sim}}_\iProt (\iPred, \datalangExpr_s, \datalangExpr_t)
 	\\
 	   \iSimv[\iProt]{\iPred}{\datalangExpr_s}{\datalangExpr_t}
 	   &\coloneqq
 	   \iSim[\iProt]{\lambdaAbs (\datalangExpr_s', \datalangExpr_t') \ldotp \exists \datalangVal_s, \datalangVal_t \ldotp \datalangExpr_s' = \datalangVal_s \iSep \datalangExpr_t' = \datalangVal_t \iSep \iPred (\datalangVal_s, \datalangVal_t)}{\datalangExpr_s}{\datalangExpr_t}
 \end{align*}
-\end{adjustwidth}
+\end{frame}
+
+\begin{frame}{Admissibility}
+\large
+\[
+  \iPersistent \left(
+    \forall \iPredTwo, \datalangExpr_s, \datalangExpr_t \ldotp
+    \iProt (\iPredTwo, \datalangExpr_s, \datalangExpr_t) \iWand
+    \mathrm{sim \mathhyphen inner}_\bot (\lambdaAbs (\_, \datalangExpr_s', \datalangExpr_t') \ldotp \iSim[\iProt]{\iPredTwo}{\datalangExpr_s'}{\datalangExpr_t'}) (\bot, \datalangExpr_s, \datalangExpr_t)
+  \right)
+\]
+\vfill
+\[
+  \Admissible{\iProt} \iWand
+  \iSim[\iProt]{\iPred}{\datalangExpr_s}{\datalangExpr_t} \iWand
+  \iSim[\bot]{\iPred}{\datalangExpr_s}{\datalangExpr_t}
+\]
 \end{frame}
 
 \begin{frame}{TMC protocol}
-\begin{adjustwidth}{-1.5em}{-1.5em}
 \begin{tabular}{rcl}
         $\iProt_\mathrm{dir} (\iPredTwo, \datalangExpr_s, \datalangExpr_t)$
         & $\coloneqq$ &
@@ -140,5 +152,4 @@
         & $\coloneqq$ &
         $\iProt_\mathrm{dir} \sqcup \iProt_\mathrm{DPS}$
 \end{tabular}
-\end{adjustwidth}
 \end{frame}
