@@ -14,7 +14,7 @@ This happens because this implementation is not *tail-recursive*.
 In other words, the recursive call to "map" is not in tail position.
 In other words, it is not the last thing the function does before returning.
 This means the compiler cannot optimize "map" to be stack-efficient, to recycle the stack frame.
-Therefore, the space complexity is linear in the size of the input list.
+Therefore, the stack space complexity is linear in the size of the input list.
 This is why the stack explodes.
 
 ---
